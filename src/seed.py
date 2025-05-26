@@ -2,8 +2,8 @@
 
 from datetime import date, datetime, timedelta
 from sqlalchemy.orm import sessionmaker
-from src.database import engine, Base, get_db_session # Import engine, Base, and the session helper
-from src.models import Patient, InPatient, OutPatient, Doctor, Department, Appointment, MedicalRecord # Import all your models
+from .database import engine, Base, get_db  # Import engine, Base, and the session helper
+from .models import Patient, InPatient, OutPatient, Doctor, Department, Appointment, MedicalRecord # Import all your models
 
 def seed_database():
     """
@@ -13,19 +13,20 @@ def seed_database():
 
     # Get a database session
     # We use next(get_db_session()) to get the session object from our generator function.
-    session = next(get_db_session())
+    session = next(get_db())
 
     try:
         # Clear existing data (optional, but good for fresh seeds)
-        # Be careful with this in production! It deletes all data.
+        # Be careful with this, It deletes all data.
         print("Clearing existing data...")
-        session.query(MedicalRecord).delete()
-        session.query(Appointment).delete()
-        session.query(InPatient).delete()
-        session.query(OutPatient).delete()
-        session.query(Patient).delete() # Delete base Patient last if using inheritance
-        session.query(Doctor).delete()
-        session.query(Department).delete()
+        from sqlalchemy import delete
+        session.execute(delete(MedicalRecord))
+        session.execute(delete(Appointment))
+        session.execute(delete(InPatient))
+        session.execute(delete(OutPatient))
+        session.execute(delete(Patient))
+        session.execute(delete(Doctor))
+        session.execute(delete(Department))
         session.commit()
         print("Existing data cleared.")
 

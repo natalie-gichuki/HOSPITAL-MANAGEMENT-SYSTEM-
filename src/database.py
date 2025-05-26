@@ -2,8 +2,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from config.settings import DATABASE_URL 
 
-# Here we are creating a AQLAlchemy engine that will connect to the db and manages the connection pool and dialects, will ad a debug statemnt to print all statemnts to the console
-engine = create_engine()(DATABASE_URL, echo=True)
+# Here we are creating a SQLAlchemy engine that will connect to the db and manages the connection pool and dialects, will ad a debug statemnt to print all statemnts to the console
+engine = create_engine(DATABASE_URL, echo=True)
 
 # next we create a session class that will be used to create sessions to the database
 Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -38,4 +38,20 @@ def get_db():
     finally:
         session.close()
 
-# for robust applications we can add the following block
+# for robust (realer) applications we can add the following block
+from contextlib import contextmanager
+@contextmanager
+def get_db_context():
+    """
+    Context manager for database sessions.
+    This function provides a context manager that automatically handles session creation and closure.
+    """
+    session = Session()
+    try:
+        yield session
+    except Exception: # If an exception occurs, rollback the session to avoid committing partial changes
+        print("An error occurred, rolling back the session.")
+        session.rollback() # Rollback the session in case of an error meaning the transaction will not be committed
+        raise
+    finally:
+        session.close()
