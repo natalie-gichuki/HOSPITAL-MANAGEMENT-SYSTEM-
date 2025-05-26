@@ -4,12 +4,21 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+<<<<<<< HEAD
 click = "*"
 sqlalchemy = "*"
 python-dotenv = "*"
 
 [dev-packages]
 ipdb = "*"
+=======
+sqlalchemy = "*"
+click = "*"
+python-dotenv = "*"
+ipdb = "*"
+
+[dev-packages]
+>>>>>>> origin
 
 [requires]
 python_version = "3.8"
